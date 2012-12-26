@@ -1,0 +1,25 @@
+--- pcp-pmda-infiniband-1.0/src/ib.c.orig	2009-10-19 20:21:09.000000000 +0200
++++ pcp-pmda-infiniband-1.0/src/ib.c	2012-12-26 19:19:28.259246024 +0100
+@@ -626,8 +626,9 @@
+ 		 * actually looking at the particular counter and I'm
+ 		 * trying to minimize resets. */
+ 		memset (pst->perfdata, 0, sizeof (pst->perfdata));
+-		if (!port_performance_query_via (pst->perfdata, &pst->portid,
++		if (!pma_query_via (pst->perfdata, &pst->portid,
+ 						 pst->remport, pst->timeout,
++						 IB_GSI_PORT_COUNTERS,
+ 						 lp->hndl)) {
+ 		    __pmNotifyErr (LOG_ERR,
+ 				   "Cannot get performance counters for %s "
+@@ -868,9 +869,9 @@
+     if (pst->resetmask && (pst->portid.lid != 0)) {
+ 	memset (pst->perfdata, 0, sizeof (pst->perfdata));
+ 
+-	if (port_performance_reset_via (pst->perfdata, &pst->portid, 
++	if (performance_reset_via (pst->perfdata, &pst->portid, 
+ 					pst->remport, pst->resetmask, 
+-					pst->timeout, pst->lport->hndl)) {
++					pst->timeout, IB_GSI_PORT_COUNTERS, pst->lport->hndl)) {
+ 	    int j;
+ 
+ 	    for (j=0; j < ARRAYSZ(mad_cnt_descriptors); j++) {
